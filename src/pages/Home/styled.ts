@@ -52,7 +52,7 @@ export const PaginationContainer = styled('div')(
 	`
 );
 
-export const WithoutResults = styled(Typography)<TypographyProps>(
+export const EmptyMessage = styled(Typography)<TypographyProps>(
 	({ theme }) => css`
 		padding: ${theme.spacing(2)};
 		text-align: center;

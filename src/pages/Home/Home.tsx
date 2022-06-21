@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, ChangeEvent } from 'react';
+import { useState, useEffect, useMemo, useCallback, ChangeEvent, KeyboardEvent } from 'react';
 import { escapeRegExp } from 'lodash';
 
 import * as styled from './styled';
@@ -77,6 +77,29 @@ const Home = () => {
 		}
 	}, []);
 
+	const searchPockemonItems = useCallback(
+		(search: string) => {
+			setCurrentPage(1);
+
+			const pokemonListFilteredBySearch = getPokemonListBySearch(search, pokemonListResult.results);
+			const pokemonListPaginated = getPokemonListPaginated(1, pokemonListFilteredBySearch);
+			const pokemonUrlAlreadyLoaded = Object.keys(pokemonDetailMap);
+
+			const pokemonUrlsToLoad: string[] = pokemonListPaginated
+				.filter((pokemonResultItem) =>
+					pokemonUrlAlreadyLoaded.every(
+						(urlAlreadyLoaded) => pokemonResultItem.url !== urlAlreadyLoaded
+					)
+				)
+				.map((pokemonResultItem) => pokemonResultItem.url);
+
+			setPokemonListBySearch(pokemonListFilteredBySearch);
+			setPokemonListByPagination(pokemonListPaginated);
+			loadPokemonDetail(pokemonUrlsToLoad);
+		},
+		[pokemonListResult, pokemonDetailMap, loadPokemonDetail]
+	);
+
 	useEffect(() => {
 		const loadAndSortPokemonList = async () => {
 			try {
@@ -105,31 +128,30 @@ const Home = () => {
 	}, [pokemonListResult, loadPokemonDetail]);
 
 	const onClickFromSearchButton = useCallback(() => {
-		setCurrentPage(1);
+		searchPockemonItems(searchValue);
+	}, [searchPockemonItems, searchValue]);
 
-		const pokemonListFilteredBySearch = getPokemonListBySearch(
-			searchValue,
-			pokemonListResult.results
-		);
-		const pokemonListPaginated = getPokemonListPaginated(1, pokemonListFilteredBySearch);
-		const pokemonUrlAlreadyLoaded = Object.keys(pokemonDetailMap);
+	const onChangeFromSearchField = useCallback(
+		(event: ChangeEvent<HTMLInputElement>) => {
+			const { value: searchValue } = event.target;
 
-		const pokemonUrlsToLoad: string[] = pokemonListPaginated
-			.filter((pokemonResultItem) =>
-				pokemonUrlAlreadyLoaded.every(
-					(urlAlreadyLoaded) => pokemonResultItem.url !== urlAlreadyLoaded
-				)
-			)
-			.map((pokemonResultItem) => pokemonResultItem.url);
+			setSearchValue(searchValue);
 
-		setPokemonListBySearch(pokemonListFilteredBySearch);
-		setPokemonListByPagination(pokemonListPaginated);
-		loadPokemonDetail(pokemonUrlsToLoad);
-	}, [pokemonListResult, searchValue, pokemonDetailMap, loadPokemonDetail]);
+			if (searchValue === '') {
+				searchPockemonItems('');
+			}
+		},
+		[searchPockemonItems]
+	);
 
-	const onChangeFromSearchField = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-		setSearchValue(event.target.value);
-	}, []);
+	const onKeyDownFromSearchField = useCallback(
+		(event: KeyboardEvent<HTMLInputElement>) => {
+			if (event.key === 'Enter') {
+				searchPockemonItems(searchValue);
+			}
+		},
+		[searchPockemonItems, searchValue]
+	);
 
 	const onChangeFromPagination = useCallback(
 		(event: ChangeEvent<unknown>, newPage: number) => {
@@ -174,11 +196,13 @@ const Home = () => {
 			</styled.PaginationContainer>
 		) : undefined;
 
-	const withoutResults: JSX.Element | undefined =
-		searchValue.trim() && pokemonListByPagination.length === 0 ? (
-			<styled.WithoutResults variant='body1'>
-				No hay elementos que coincidan con la búsqueda
-			</styled.WithoutResults>
+	const emptyMessage: JSX.Element | undefined =
+		pokemonListByPagination.length === 0 ? (
+			<styled.EmptyMessage variant='body1'>
+				{searchValue.trim()
+					? 'No hay elementos que coincidan con la búsqueda'
+					: 'No hay elementos que mostrar'}
+			</styled.EmptyMessage>
 		) : undefined;
 
 	return (
@@ -195,6 +219,7 @@ const Home = () => {
 					variant='outlined'
 					size='small'
 					onChange={onChangeFromSearchField}
+					onKeyDown={onKeyDownFromSearchField}
 				/>
 
 				<Button variant='contained' size='small' onClick={onClickFromSearchButton}>
@@ -210,7 +235,7 @@ const Home = () => {
 				<styled.PokemonItemsContainer>{pokemonItems}</styled.PokemonItemsContainer>
 			)}
 
-			{withoutResults}
+			{emptyMessage}
 
 			{pagination}
 		</styled.Home>
