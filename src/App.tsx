@@ -1,5 +1,7 @@
+import Home from './pages/Home';
+
 function App() {
-	return <div>Base application</div>;
+	return <Home />;
 }
 
 export default App;
