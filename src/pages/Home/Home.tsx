@@ -1,16 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback, ChangeEvent } from 'react';
 
 import * as styled from './styled';
 
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Pagination from '@mui/material/Pagination';
 import PokemonItem from './components/PokemonItem';
 
-import { getPokemonList, PokemonListResult } from '../../api/get-pokemon-list';
+import { getPokemonList, PokemonListResult, PokemonResultItem } from '../../api/get-pokemon-list';
+
+const DEFAULT_PAGE_SIZE: number = 50;
+
+type PokemonDetail = {
+	imageUrl: string;
+	loadingData: boolean;
+};
 
 const Home = () => {
 	const [pokemonListResult, setPokemonListResult] = useState<PokemonListResult>({ results: [] });
+
+	const [pokemonDetailMap, setPokemonDetailMap] = useState<{
+		[pokemonId: string]: PokemonDetail | undefined;
+	}>({});
+
+	const [currentPage, setCurrentPage] = useState<number>(1);
+
+	const [pokemonListByPagination, setPokemonListByPagination] = useState<PokemonResultItem[]>([]);
+
+	const totalPages: number = useMemo(
+		() => Math.ceil(pokemonListResult.results.length / DEFAULT_PAGE_SIZE),
+		[pokemonListResult]
+	);
 
 	useEffect(() => {
 		const loadAndSortPokemonList = async () => {
@@ -30,9 +51,33 @@ const Home = () => {
 		loadAndSortPokemonList();
 	}, []);
 
-	const pokemonItems: JSX.Element[] = pokemonListResult.results.map((resultItem) => (
+	useEffect(() => {
+		const startIndex: number = (currentPage - 1) * DEFAULT_PAGE_SIZE;
+
+		setPokemonListByPagination(
+			pokemonListResult.results.slice(startIndex, startIndex + DEFAULT_PAGE_SIZE)
+		);
+	}, [pokemonListResult, currentPage]);
+
+	const onChangeFromPagination = useCallback((event: ChangeEvent<unknown>, newPage: number) => {
+		setCurrentPage(newPage);
+	}, []);
+
+	const pokemonItems: JSX.Element[] = pokemonListByPagination.map((resultItem) => (
 		<PokemonItem key={resultItem.url} imageUrl='' title={resultItem.name} />
 	));
+
+	const pagination: JSX.Element = (
+		<styled.PaginationContainer>
+			<Pagination
+				color='primary'
+				size='large'
+				page={currentPage}
+				count={totalPages}
+				onChange={onChangeFromPagination}
+			/>
+		</styled.PaginationContainer>
+	);
 
 	return (
 		<styled.Home>
@@ -52,7 +97,11 @@ const Home = () => {
 
 			<styled.ResultsTitle variant='h4'>Resultados de la búsqueda</styled.ResultsTitle>
 
+			{pagination}
+
 			<styled.PokemonItemsContainer>{pokemonItems}</styled.PokemonItemsContainer>
+
+			{pagination}
 		</styled.Home>
 	);
 };

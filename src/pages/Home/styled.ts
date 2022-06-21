@@ -42,5 +42,12 @@ export const PokemonItemsContainer = styled('div')(
 		grid-template-columns: repeat(auto-fill, 128px);
 		gap: ${theme.spacing(2)};
 		justify-content: center;
+		padding: ${theme.spacing(2)} 0;
+	`
+);
+
+export const PaginationContainer = styled('div')(
+	({ theme }) => css`
+		padding: ${theme.spacing(2)} 0;
 	`
 );
