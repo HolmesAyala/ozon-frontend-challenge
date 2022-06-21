@@ -35,3 +35,12 @@ export const ResultsTitle = styled(Typography)<TypographyProps>(
 		font-weight: 600;
 	`
 );
+
+export const PokemonItemsContainer = styled('div')(
+	({ theme }) => css`
+		display: grid;
+		grid-template-columns: repeat(auto-fill, 128px);
+		column-gap: ${theme.spacing(2)};
+		justify-content: center;
+	`
+);

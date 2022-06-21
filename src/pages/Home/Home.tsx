@@ -1,7 +1,9 @@
+import * as styled from './styled';
+
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import * as styled from './styled';
+import PokemonItem from './components/PokemonItem';
 
 const Home = () => {
 	return (
@@ -21,6 +23,33 @@ const Home = () => {
 			</styled.SearchContainer>
 
 			<styled.ResultsTitle variant='h4'>Resultados de la búsqueda</styled.ResultsTitle>
+
+			<styled.PokemonItemsContainer>
+				<PokemonItem
+					imageUrl='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/2.svg'
+					title='ivysaur'
+				/>
+
+				<PokemonItem
+					imageUrl='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/2.svg'
+					title='ivysaur with a name very very long'
+				/>
+
+				<PokemonItem
+					imageUrl='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/2.svg'
+					title='ivysaur'
+				/>
+
+				<PokemonItem
+					imageUrl='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/2.svg'
+					title='ivysaur'
+				/>
+
+				<PokemonItem
+					imageUrl='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/2.svg'
+					title='ivysaur'
+				/>
+			</styled.PokemonItemsContainer>
 		</styled.Home>
 	);
 };
