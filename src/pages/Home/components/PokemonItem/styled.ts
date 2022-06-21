@@ -11,7 +11,7 @@ export const PokemonImage = styled('img')(
 		overflow: hidden;
 		border-radius: 8px;
 		object-fit: cover;
-		border: 1px solid #a3a3a3;
+		border: 1px solid ${theme.palette.gray.primary};
 		user-select: none;
 		background-color: white;
 	`
@@ -26,9 +26,5 @@ export const PokemonTitle = styled(Typography)<TypographyProps>(
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
-
-		&::first-letter {
-			text-transform: capitalize;
-		}
 	`
 );
