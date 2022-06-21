@@ -40,7 +40,7 @@ export const PokemonItemsContainer = styled('div')(
 	({ theme }) => css`
 		display: grid;
 		grid-template-columns: repeat(auto-fill, 128px);
-		column-gap: ${theme.spacing(2)};
+		gap: ${theme.spacing(2)};
 		justify-content: center;
 	`
 );
