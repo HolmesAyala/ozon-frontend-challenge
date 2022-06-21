@@ -51,3 +51,12 @@ export const PaginationContainer = styled('div')(
 		padding: ${theme.spacing(2)} 0;
 	`
 );
+
+export const WithoutResults = styled(Typography)<TypographyProps>(
+	({ theme }) => css`
+		padding: ${theme.spacing(2)};
+		text-align: center;
+		background-color: white;
+		border-radius: 8px;
+	`
+);

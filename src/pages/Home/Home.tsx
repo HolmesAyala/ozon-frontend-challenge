@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, ChangeEvent } from 'react';
+import { debounce, escapeRegExp } from 'lodash';
 
 import * as styled from './styled';
 
@@ -24,14 +25,27 @@ const Home = () => {
 		[pokemonId: string]: PokemonDetail | undefined;
 	}>({});
 
+	const [searchDebounced, setSearchDebounced] = useState<string>('');
+
+	const [pokemonListBySearch, setPokemonListBySearch] = useState<PokemonResultItem[]>([]);
+
+	const debounceSearch = useMemo(
+		() =>
+			debounce((searchValue: string) => {
+				setSearchDebounced(searchValue);
+				setCurrentPage(1);
+			}, 250),
+		[]
+	);
+
 	const [currentPage, setCurrentPage] = useState<number>(1);
 
-	const [pokemonListByPagination, setPokemonListByPagination] = useState<PokemonResultItem[]>([]);
-
 	const totalPages: number = useMemo(
-		() => Math.ceil(pokemonListResult.results.length / DEFAULT_PAGE_SIZE),
-		[pokemonListResult]
+		() => Math.ceil(pokemonListBySearch.length / DEFAULT_PAGE_SIZE),
+		[pokemonListBySearch]
 	);
+
+	const [pokemonListByPagination, setPokemonListByPagination] = useState<PokemonResultItem[]>([]);
 
 	useEffect(() => {
 		const loadAndSortPokemonList = async () => {
@@ -52,12 +66,27 @@ const Home = () => {
 	}, []);
 
 	useEffect(() => {
+		const regExp = new RegExp(escapeRegExp(searchDebounced), 'gi');
+
+		setPokemonListBySearch(
+			pokemonListResult.results.filter((resultItem) => resultItem.name.match(regExp))
+		);
+	}, [searchDebounced, pokemonListResult]);
+
+	useEffect(() => {
 		const startIndex: number = (currentPage - 1) * DEFAULT_PAGE_SIZE;
 
 		setPokemonListByPagination(
-			pokemonListResult.results.slice(startIndex, startIndex + DEFAULT_PAGE_SIZE)
+			pokemonListBySearch.slice(startIndex, startIndex + DEFAULT_PAGE_SIZE)
 		);
-	}, [pokemonListResult, currentPage]);
+	}, [pokemonListBySearch, currentPage]);
+
+	const onChangeFromSearchField = useCallback(
+		(event: ChangeEvent<HTMLInputElement>) => {
+			debounceSearch(event.target.value);
+		},
+		[debounceSearch]
+	);
 
 	const onChangeFromPagination = useCallback((event: ChangeEvent<unknown>, newPage: number) => {
 		setCurrentPage(newPage);
@@ -67,17 +96,25 @@ const Home = () => {
 		<PokemonItem key={resultItem.url} imageUrl='' title={resultItem.name} />
 	));
 
-	const pagination: JSX.Element = (
-		<styled.PaginationContainer>
-			<Pagination
-				color='primary'
-				size='large'
-				page={currentPage}
-				count={totalPages}
-				onChange={onChangeFromPagination}
-			/>
-		</styled.PaginationContainer>
-	);
+	const pagination: JSX.Element | undefined =
+		totalPages > 1 ? (
+			<styled.PaginationContainer>
+				<Pagination
+					color='primary'
+					size='large'
+					page={currentPage}
+					count={totalPages}
+					onChange={onChangeFromPagination}
+				/>
+			</styled.PaginationContainer>
+		) : undefined;
+
+	const withoutResults: JSX.Element | undefined =
+		searchDebounced.trim() && pokemonListByPagination.length === 0 ? (
+			<styled.WithoutResults variant='body1'>
+				No hay elementos que coincidan con la búsqueda
+			</styled.WithoutResults>
+		) : undefined;
 
 	return (
 		<styled.Home>
@@ -88,7 +125,12 @@ const Home = () => {
 			<styled.SubTitle variant='subtitle1'>El que quiere Pokemons, que los busque.</styled.SubTitle>
 
 			<styled.SearchContainer>
-				<TextField placeholder='Ingrese el nombre a buscar' variant='outlined' size='small' />
+				<TextField
+					placeholder='Ingrese el nombre a buscar'
+					variant='outlined'
+					size='small'
+					onChange={onChangeFromSearchField}
+				/>
 
 				<Button variant='contained' size='small'>
 					Buscar
@@ -99,7 +141,11 @@ const Home = () => {
 
 			{pagination}
 
-			<styled.PokemonItemsContainer>{pokemonItems}</styled.PokemonItemsContainer>
+			{pokemonItems.length > 0 && (
+				<styled.PokemonItemsContainer>{pokemonItems}</styled.PokemonItemsContainer>
+			)}
+
+			{withoutResults}
 
 			{pagination}
 		</styled.Home>
