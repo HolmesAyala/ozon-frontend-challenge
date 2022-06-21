@@ -13,7 +13,6 @@ export const PokemonImage = styled('img')(
 		object-fit: cover;
 		border: 1px solid #a3a3a3;
 		user-select: none;
-		padding: ${theme.spacing(1)};
 		background-color: white;
 	`
 );
