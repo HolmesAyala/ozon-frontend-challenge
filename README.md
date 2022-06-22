@@ -1,46 +1,42 @@
-# Getting Started with Create React App
+# OZON - Test técnico - Frontend Developer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Requisitos
 
-## Available Scripts
+* ✅ Se debe permitir buscar de forma parcial (ej. Si buscamos “mew” se tienen que
+mostrar los pokemon que coincidan con la búsqueda: mew, mewtwo, 
+mewtwo-mega-x, etc).
+* ✅ Implementar paginación de los pokemon.
+* ✅ Incluir tests unitarios.
+* ✅ Usar un linter.
+* ✅ Gestionar projecto con git.
+* ✅ Hostear el proyecto.
 
-In the project directory, you can run:
+## Scripts
+
+En el directorio del proyecto, puedes ejecutar:
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Ejecuta la aplicación en modo de desarrollo. Por defecto se encuentra en [http://localhost:3000](http://localhost:3000).
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Ejecutar tests (jest) en modo interactivo. Ver [running tests](https://facebook.github.io/create-react-app/docs/running-tests) para más información.
+
+### `npm run lint`
+
+Ejecuta el linter de la aplicación (eslint) para verificar errores o alertas en el código.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Prepara la aplicación para producción en el directorio `build`. Consultar [deployment](https://facebook.github.io/create-react-app/docs/deployment) para más información.
 
 ### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+**Nota: Solo se puede ejecutar una vez.**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Create React App
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Este proyecto fue creado con [Create React App](https://github.com/facebook/create-react-app).
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Novedades
