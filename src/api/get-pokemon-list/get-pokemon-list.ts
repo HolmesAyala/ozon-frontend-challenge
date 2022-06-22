@@ -2,11 +2,13 @@ import { config } from '../../config';
 
 export const POKEMON_LIST_BASE_URL = `${config.api.baseUrl}/pokemon`;
 
+export type GetPokemonListQuery = {
+	limit?: number;
+	offset?: number;
+};
+
 export type PropsOfGetPokemonList = {
-	query?: {
-		limit?: number;
-		offset?: number;
-	};
+	query?: GetPokemonListQuery;
 };
 
 export type PokemonResultItem = {
@@ -23,17 +25,8 @@ export async function getPokemonList(props?: PropsOfGetPokemonList): Promise<Pok
 
 	if (props?.query) {
 		const query = props.query;
-		const keys = Object.keys(query) as (keyof PropsOfGetPokemonList['query'])[];
 
-		const tempQuery: { [key: string]: string } = keys.reduce(
-			(acumulator, key) => ({
-				...acumulator,
-				[key]: typeof query[key] !== 'string' ? String(query[key]) : query[key],
-			}),
-			{}
-		);
-
-		urlQuery = new URLSearchParams(tempQuery).toString();
+		urlQuery = new URLSearchParams(queryToStringRecord(query)).toString();
 	}
 
 	const response = await fetch(`${POKEMON_LIST_BASE_URL}?${urlQuery}`);
@@ -41,4 +34,14 @@ export async function getPokemonList(props?: PropsOfGetPokemonList): Promise<Pok
 	const body = await response.json();
 
 	return body;
+}
+
+export function queryToStringRecord(queryToParse: GetPokemonListQuery): { [key: string]: string } {
+	return Object.keys(queryToParse).reduce(
+		(result, key) => ({
+			...result,
+			[key]: String(queryToParse[key as keyof GetPokemonListQuery]),
+		}),
+		{}
+	);
 }

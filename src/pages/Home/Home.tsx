@@ -15,6 +15,8 @@ import { getPokemonDetail } from '../../api/get-pokemon-detail';
 
 import { getPokemonListPaginated, getPokemonListBySearch } from './utils';
 
+export const MAIN_TITLE = 'Pokemon finder';
+
 export const PLACEHOLDER = {
 	SEARCH_FIELD: 'Ingrese el nombre a buscar',
 };
@@ -208,7 +210,7 @@ const Home = ({ pageSize = DEFAULT_PAGE_SIZE }: HomeProps) => {
 	return (
 		<styled.Home>
 			<Typography variant='h3' component='h1' sx={{ fontWeight: 'bold' }}>
-				Pokemon finder
+				{MAIN_TITLE}
 			</Typography>
 
 			<styled.SubTitle variant='subtitle1'>El que quiere Pokemons, que los busque.</styled.SubTitle>
