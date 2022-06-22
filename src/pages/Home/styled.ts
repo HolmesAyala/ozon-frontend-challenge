@@ -4,9 +4,14 @@ import BaseFooter from './components/Footer';
 
 export const Home = styled('div')(
 	({ theme }) => css`
-		padding: ${theme.spacing(2)} ${theme.spacing(4)};
+		padding: ${theme.spacing(2)} ${theme.spacing(4)} 0 ${theme.spacing(4)};
 		max-width: 1024px;
 		margin: 0 auto;
+
+		${theme.breakpoints.down('sm')} {
+			padding-left: ${theme.spacing(2)};
+			padding-right: ${theme.spacing(2)};
+		}
 	`
 );
 
@@ -20,7 +25,11 @@ export const SearchContainer = styled('div')(
 	({ theme }) => css`
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) 200px;
-		column-gap: ${theme.spacing(2)};
+		gap: ${theme.spacing(2)};
+
+		${theme.breakpoints.down('sm')} {
+			grid-template-columns: 1fr;
+		}
 	`
 );
 

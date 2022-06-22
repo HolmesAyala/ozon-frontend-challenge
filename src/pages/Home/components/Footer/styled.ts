@@ -7,5 +7,10 @@ export const Footer = styled('footer')(
 		padding: ${theme.spacing(4)} 0;
 		border-top: 1px solid ${theme.palette.gray.primary};
 		align-items: center;
+		gap: ${theme.spacing(2)};
+
+		${theme.breakpoints.down('sm')} {
+			grid-template-columns: 1fr;
+		}
 	`
 );
