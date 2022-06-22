@@ -28,6 +28,8 @@ export const MESSAGES = {
 
 const DEFAULT_PAGE_SIZE: number = 28;
 
+const QUERY_LIMIT_FOR_POKEMON_LIST: number = 10000;
+
 type PokemonDetail = {
 	imageUrl: string;
 };
@@ -108,7 +110,7 @@ const Home = ({ pageSize = DEFAULT_PAGE_SIZE }: HomeProps) => {
 		const loadAndSortPokemonList = async () => {
 			try {
 				const pokemonListResult: PokemonListResult = await getPokemonList({
-					query: { limit: 10000 },
+					query: { limit: QUERY_LIMIT_FOR_POKEMON_LIST },
 				});
 
 				pokemonListResult.results.sort((itemA, itemB) => itemA.name.localeCompare(itemB.name));
