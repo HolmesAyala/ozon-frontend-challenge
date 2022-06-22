@@ -1,5 +1,7 @@
 # OZON - Test técnico - Frontend Developer
 
+[Url de aplicación](https://seashell-app-h8ai4.ondigitalocean.app/)
+
 ## Requisitos
 
 * ✅ Se debe permitir buscar de forma parcial (ej. Si buscamos “mew” se tienen que
@@ -10,6 +12,11 @@ mewtwo-mega-x, etc).
 * ✅ Usar un linter.
 * ✅ Gestionar projecto con git.
 * ✅ Hostear el proyecto.
+
+## Dependencias
+
+* npm: >=8.0.0
+* node": >=16.0.0
 
 ## Scripts
 
