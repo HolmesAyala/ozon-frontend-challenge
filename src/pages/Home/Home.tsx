@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useCallback, ChangeEvent, KeyboardEvent } from 'react';
-import { escapeRegExp } from 'lodash';
 
 import * as styled from './styled';
 
@@ -14,30 +13,28 @@ import characterPlaceholderImage from './assets/character-placeholder.webp';
 import { getPokemonList, PokemonListResult, PokemonResultItem } from '../../api/get-pokemon-list';
 import { getPokemonDetail } from '../../api/get-pokemon-detail';
 
+import { getPokemonListPaginated, getPokemonListBySearch } from './utils';
+
+export const PLACEHOLDER = {
+	SEARCH_FIELD: 'Ingrese el nombre a buscar',
+};
+
+export const MESSAGES = {
+	EMPTY_SEARCH: 'No hay elementos que coincidan con la búsqueda',
+	WITHOUT_ITEMS_TO_SHOW: 'No hay elementos que mostrar',
+};
+
 const DEFAULT_PAGE_SIZE: number = 28;
-
-const getPokemonListBySearch = (search: string, pokemonList: PokemonResultItem[]) => {
-	const regExp = new RegExp(escapeRegExp(search), 'gi');
-
-	return pokemonList.filter((resultItem) => resultItem.name.match(regExp));
-};
-
-const getPokemonListPaginated = (
-	page: number,
-	pokemonList: PokemonResultItem[]
-): PokemonResultItem[] => {
-	const startIndex: number = (page - 1) * DEFAULT_PAGE_SIZE;
-
-	const pokemonListPaginated = pokemonList.slice(startIndex, startIndex + DEFAULT_PAGE_SIZE);
-
-	return pokemonListPaginated;
-};
 
 type PokemonDetail = {
 	imageUrl: string;
 };
 
-const Home = () => {
+type HomeProps = {
+	pageSize?: number;
+};
+
+const Home = ({ pageSize = DEFAULT_PAGE_SIZE }: HomeProps) => {
 	const [pokemonListResult, setPokemonListResult] = useState<PokemonListResult>({ results: [] });
 
 	const [pokemonDetailMap, setPokemonDetailMap] = useState<{
@@ -51,8 +48,8 @@ const Home = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 
 	const totalPages: number = useMemo(
-		() => Math.ceil(pokemonListBySearch.length / DEFAULT_PAGE_SIZE),
-		[pokemonListBySearch]
+		() => Math.ceil(pokemonListBySearch.length / pageSize),
+		[pokemonListBySearch, pageSize]
 	);
 
 	const [pokemonListByPagination, setPokemonListByPagination] = useState<PokemonResultItem[]>([]);
@@ -82,7 +79,11 @@ const Home = () => {
 			setCurrentPage(1);
 
 			const pokemonListFilteredBySearch = getPokemonListBySearch(search, pokemonListResult.results);
-			const pokemonListPaginated = getPokemonListPaginated(1, pokemonListFilteredBySearch);
+			const pokemonListPaginated = getPokemonListPaginated(
+				1,
+				pageSize,
+				pokemonListFilteredBySearch
+			);
 			const pokemonUrlAlreadyLoaded = Object.keys(pokemonDetailMap);
 
 			const pokemonUrlsToLoad: string[] = pokemonListPaginated
@@ -95,9 +96,10 @@ const Home = () => {
 
 			setPokemonListBySearch(pokemonListFilteredBySearch);
 			setPokemonListByPagination(pokemonListPaginated);
-			loadPokemonDetail(pokemonUrlsToLoad);
+
+			if (pokemonUrlsToLoad.length > 0) loadPokemonDetail(pokemonUrlsToLoad);
 		},
-		[pokemonListResult, pokemonDetailMap, loadPokemonDetail]
+		[pokemonListResult, pokemonDetailMap, loadPokemonDetail, pageSize]
 	);
 
 	useEffect(() => {
@@ -120,12 +122,12 @@ const Home = () => {
 
 	useEffect(() => {
 		const pokemonListFilteredBySearch = getPokemonListBySearch('', pokemonListResult.results);
-		const pokemonListPaginated = getPokemonListPaginated(1, pokemonListFilteredBySearch);
+		const pokemonListPaginated = getPokemonListPaginated(1, pageSize, pokemonListFilteredBySearch);
 
 		setPokemonListBySearch(pokemonListFilteredBySearch);
 		setPokemonListByPagination(pokemonListPaginated);
 		loadPokemonDetail(pokemonListPaginated.map((pokemonItem) => pokemonItem.url));
-	}, [pokemonListResult, loadPokemonDetail]);
+	}, [pokemonListResult, loadPokemonDetail, pageSize]);
 
 	const onClickFromSearchButton = useCallback(() => {
 		searchPockemonItems(searchValue);
@@ -157,7 +159,7 @@ const Home = () => {
 		(event: ChangeEvent<unknown>, newPage: number) => {
 			setCurrentPage(newPage);
 
-			const pokemonListPaginated = getPokemonListPaginated(newPage, pokemonListBySearch);
+			const pokemonListPaginated = getPokemonListPaginated(newPage, pageSize, pokemonListBySearch);
 
 			const pokemonUrlAlreadyLoaded = Object.keys(pokemonDetailMap);
 
@@ -172,7 +174,7 @@ const Home = () => {
 			setPokemonListByPagination(pokemonListPaginated);
 			loadPokemonDetail(pokemonUrlsToLoad);
 		},
-		[pokemonListBySearch, loadPokemonDetail, pokemonDetailMap]
+		[pokemonListBySearch, loadPokemonDetail, pokemonDetailMap, pageSize]
 	);
 
 	const pokemonItems: JSX.Element[] = pokemonListByPagination.map((resultItem) => (
@@ -198,10 +200,8 @@ const Home = () => {
 
 	const emptyMessage: JSX.Element | undefined =
 		pokemonListByPagination.length === 0 ? (
-			<styled.EmptyMessage variant='body1'>
-				{searchValue.trim()
-					? 'No hay elementos que coincidan con la búsqueda'
-					: 'No hay elementos que mostrar'}
+			<styled.EmptyMessage variant='body1' role='alert'>
+				{searchValue.trim() ? MESSAGES.EMPTY_SEARCH : MESSAGES.WITHOUT_ITEMS_TO_SHOW}
 			</styled.EmptyMessage>
 		) : undefined;
 
@@ -215,7 +215,7 @@ const Home = () => {
 
 			<styled.SearchContainer>
 				<TextField
-					placeholder='Ingrese el nombre a buscar'
+					placeholder={PLACEHOLDER.SEARCH_FIELD}
 					variant='outlined'
 					size='small'
 					onChange={onChangeFromSearchField}

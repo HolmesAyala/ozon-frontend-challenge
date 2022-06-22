@@ -9,12 +9,6 @@ export const Home = styled('div')(
 	`
 );
 
-export const Title = styled(Typography)<TypographyProps>(
-	() => css`
-		font-weight: bold;
-	`
-);
-
 export const SubTitle = styled(Typography)<TypographyProps>(
 	({ theme }) => css`
 		margin-bottom: ${theme.spacing(2)};
