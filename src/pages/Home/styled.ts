@@ -1,5 +1,6 @@
 import { styled, css } from '@mui/material/styles';
 import Typography, { TypographyProps } from '@mui/material/Typography';
+import BaseFooter from './components/Footer';
 
 export const Home = styled('div')(
 	({ theme }) => css`
@@ -52,5 +53,11 @@ export const EmptyMessage = styled(Typography)<TypographyProps>(
 		text-align: center;
 		background-color: white;
 		border-radius: 8px;
+	`
+);
+
+export const Footer = styled(BaseFooter)(
+	({ theme }) => css`
+		margin-top: ${theme.spacing(4)};
 	`
 );
