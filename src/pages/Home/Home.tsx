@@ -7,7 +7,6 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Pagination from '@mui/material/Pagination';
 import PokemonItem from './components/PokemonItem';
-import Footer from './components/Footer';
 
 import characterPlaceholderImage from './assets/character-placeholder.webp';
 
